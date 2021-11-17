@@ -3,25 +3,41 @@ import {
   RenderingVariants,
   RenderingVariantProps,
   RenderingVariantParameters,
-  Field,
   ComponentRendering,
   Link as JssLink,
   LinkFieldValue,
+  Text,
+  useSitecoreContext,
 } from '@sitecore-jss/sitecore-jss-nextjs';
+import {
+  TextField,
+} from '@sitecore-jss/sitecore-jss-react';
 
 interface Fields {
   data: Object & {
     datasource: Object & {
       url: Object & {
         path: string;
+        siteName: string;
       };
-      title: Field<string>;
+      title: Object & {
+        jsonValue: Object & {
+          value: string;
+          editable: string;
+        }
+      };
     };
     contextItem: Object & {
       url: Object & {
         path: string;
+        siteName: string;
       };
-      title: Field<string>;
+      title: Object & {
+        jsonValue: Object & {
+          value: string;
+          editable: string;
+        }
+      };
     };
   };
 }
@@ -53,19 +69,27 @@ const ComponentContent = (props: any) => {
 };
 
 export const Default = (props: RenderingVariantProps<Fields>): JSX.Element => {
-  let link: LinkFieldValue = {};
-  if (props.fields?.data?.datasource) {
-    link.href = props.fields.data.datasource.url.path;
-    link.title = props.fields.data.datasource.title.value;
-    link.text = props.fields.data.datasource.title.value;
-  } else {
-    link.href = props.fields.data.contextItem.url.path;
-    link.title = props.fields.data.contextItem.title.value;
-    link.text = props.fields.data.contextItem.title.value;
+  let datasource = props.fields?.data?.datasource || props.fields?.data?.contextItem;
+  let text: TextField = {
+    value: datasource?.title?.jsonValue?.value,
+    editable: datasource?.title?.jsonValue?.editable,
+  };
+  let link: LinkFieldValue = {
+    href: datasource?.url?.path,
+    title: datasource?.title?.jsonValue?.value,
+    editable: true,
+  };
+  if (useSitecoreContext().sitecoreContext.pageState !== 'normal') {
+    link.href += `?sc_site=${datasource?.url?.siteName}`;
+    if (!text.value) {
+      text.value = "Title field";
+    }
   }
   return (
     <ComponentContent styles={props.styles}>
-      <JssLink field={link} />
+      <JssLink field={link}>
+        <Text field={text} />
+      </JssLink>
     </ComponentContent>
   );
 };
