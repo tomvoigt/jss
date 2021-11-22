@@ -20,7 +20,7 @@ interface Fields {
         path: string;
         siteName: string;
       };
-      title: Object & {
+      field: Object & {
         jsonValue: Object & {
           value: string;
           editable: string;
@@ -32,7 +32,7 @@ interface Fields {
         path: string;
         siteName: string;
       };
-      title: Object & {
+      field: Object & {
         jsonValue: Object & {
           value: string;
           editable: string;
@@ -71,18 +71,19 @@ const ComponentContent = (props: any) => {
 export const Default = (props: RenderingVariantProps<Fields>): JSX.Element => {
   let datasource = props.fields?.data?.datasource || props.fields?.data?.contextItem;
   let text: TextField = {
-    value: datasource?.title?.jsonValue?.value,
-    editable: datasource?.title?.jsonValue?.editable,
+    value: datasource?.field?.jsonValue?.value,
+    editable: datasource?.field?.jsonValue?.editable,
   };
   let link: LinkFieldValue = {
     href: datasource?.url?.path,
-    title: datasource?.title?.jsonValue?.value,
+    title: datasource?.field?.jsonValue?.value,
     editable: true,
   };
   if (useSitecoreContext().sitecoreContext.pageState !== 'normal') {
     link.href += `?sc_site=${datasource?.url?.siteName}`;
     if (!text.value) {
       text.value = "Title field";
+      link.href = "#";
     }
   }
   return (
