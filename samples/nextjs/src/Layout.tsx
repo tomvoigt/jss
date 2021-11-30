@@ -78,7 +78,7 @@ const Layout = ({ sitecoreContext: { route } }: LayoutProps): JSX.Element => {
       {/* root placeholder for the app, which we add components to using route data */}
       <div className="container">
         <div className="row">
-          {route && <Placeholder name="JssNextWeb-jss-main" rendering={route} />}
+          {route && <Placeholder name="jss-main" rendering={route} />}
         </div>
       </div>
     </>

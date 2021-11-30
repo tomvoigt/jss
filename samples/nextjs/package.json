@@ -4,9 +4,9 @@
   "version": "20.0.0-canary.46",
   "private": true,
   "config": {
-    "appName": "SxaSampleSite",
+    "appName": "headless",
     "rootPlaceholders": [
-      "JssNextWeb-jss-main"
+      "jss-main"
     ],
     "sitecoreConfigPath": "/App_Config/Include/zzz",
     "graphQLEndpointPath": "/sitecore/api/graph/edge",
@@ -30,7 +30,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@sitecore-jss/sitecore-jss-nextjs": "^20.0.0-canary.46",
+    "@sitecore-jss/sitecore-jss-nextjs": "20.0.0-canary.46",
     "bootstrap": "^4.3.1",
     "deep-equal": "^2.0.5",
     "graphql": "~15.4.0",
