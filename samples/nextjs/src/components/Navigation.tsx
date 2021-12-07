@@ -77,7 +77,7 @@ const NavigationList = (props: any) => {
     return (            
       <li className={props.fields.Styles.join(" ")} key={props.fields.Id}>
           <div className="navigation-title">
-            <a title={props.fields.DisplayName} href={props.fields.href}>{text}</a>
+            <a title={props.fields.DisplayName} href={props.fields.Href}>{text}</a>
           </div>
           <ul className="clearfix">
             {children}
@@ -88,7 +88,7 @@ const NavigationList = (props: any) => {
     return (
       <li className={props.fields.Styles.join(" ")} key={props.fields.Id}>
           <div className="navigation-title">
-            <a title={props.fields.DisplayName} href={props.fields.href}>{text}</a>
+            <a title={props.fields.DisplayName} href={props.fields.Href}>{text}</a>
           </div>
       </li>     
     )
