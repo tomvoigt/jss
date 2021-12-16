@@ -41,6 +41,17 @@ let getNavigationText = function (props: any): string {
 };
 
 const Navigation = (props: ComponentProps): JSX.Element => {
+
+  if (Object.values(props.fields).length === 0) {
+    return (
+      <div className={`component navigation`}>
+        <div className="component-content">
+          [Navigation]
+        </div>
+      </div>
+    );
+  }  
+
   const list = [];  
   for (let i = 0; i < Object.values(props.fields).length; i++) {
     const element = props.fields[i]; 
