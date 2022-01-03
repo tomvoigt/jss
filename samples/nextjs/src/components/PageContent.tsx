@@ -48,15 +48,28 @@ const ComponentContent = (props: any) => {
   )
 }
 
-export const Default = (props: RenderingVariantProps<Fields>): JSX.Element => {      
+export const Default = (props: RenderingVariantProps<Fields>): JSX.Element => { 
+  const { sitecoreContext } = useSitecoreContext<SitecoreContextValue>();
+
+  if (!(props.fields && props.fields.Content) && !sitecoreContext.route.fields.Content) {
+    return (
+      <div className={`component content ${props.styles?.replace(/\|/g, ' ')}`}>
+        <div className="component-content">
+          <div className="field-content">
+            [Content]
+          </div>
+        </div>
+      </div>  
+    )
+  }
+  
   if (props.fields && props.fields.Content) {
     return (
       <ComponentContent styles={props.styles}>
         <JssRichText field={props.fields.Content} />
       </ComponentContent>
     );
-  } else {
-    const { sitecoreContext } = useSitecoreContext<SitecoreContextValue>();
+  } else {    
     return (
       <ComponentContent styles={props.styles}>
         <JssRichText field={sitecoreContext.route.fields.Content} />
