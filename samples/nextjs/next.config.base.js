@@ -24,6 +24,11 @@ const nextConfig = {
   env: {
     PUBLIC_URL: publicUrl,
   },
+  resolve: {
+    alias: {
+      process: require('process'),
+    }
+  },
 
   i18n: {
     // These are all the locales you want to support in your application.
