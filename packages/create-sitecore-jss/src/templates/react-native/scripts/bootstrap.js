@@ -1,6 +1,5 @@
 require('dotenv').config();
 const configGenerator = require('./generate-config');
-const { constants } = require('@sitecore-jss/sitecore-jss-react-native');
 const { startSitecoreTunnel, transformScJssConfig } = require('./utils');
 
 /*
@@ -10,7 +9,7 @@ const { startSitecoreTunnel, transformScJssConfig } = require('./utils');
   and the global config module.
 */
 
-const disconnected = process.env.JSS_MODE === constants.JSS_MODE.DISCONNECTED;
+const disconnected = process.env.JSS_MODE === 'disconnected';
 const connectedTunnel = process.env.JSS_MODE === 'connected-tunnel';
 
 /*

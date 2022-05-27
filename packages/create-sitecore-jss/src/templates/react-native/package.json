@@ -13,7 +13,7 @@
   "scripts": {
     "bootstrap": "node scripts/bootstrap.js",
     "start:expo": "expo start --tunnel",
-    "start": "cross-env-shell JSS_MODE=disconnected \"npm-run-all -p bootstrap start:proxy start:expo\"",
+    "start": "cross-env-shell JSS_MODE=disconnected \"npm-run-all -p bootstrap start:expo start:proxy\"",
     "start:connected-tunnel": "cross-env-shell JSS_MODE=connected-tunnel \"npm-run-all -p bootstrap start:expo\"",
     "start:connected": "npm-run-all -s bootstrap start:expo",
     "start:proxy": "node scripts/disconnected-mode-proxy.js",
