@@ -1,0 +1,19 @@
+﻿{
+  "nextjs": {
+    "initializers": [],
+    "args": {
+      "appName": "nextjs",
+      "destination": "..\\..\\samples\\nextjs",
+      "fetchWith": "GraphQL",
+      "prerender": "SSR"
+    }
+  },
+  "default": {
+    "initializers": [],
+    "args": {
+      "appName": "default",
+      "destination": "..\\..\\samples\\default",
+      "fetchWith": "GraphQL"
+    }
+  }
+}

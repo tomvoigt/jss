@@ -40,13 +40,19 @@ steps:
     versionSpec: '16.x'
 - script: |
     yarn cache clean --all && yarn install --immutable
-  displayName: 'yarn install'
+  displayName: 'yarn install - initial'
 - script: |
-    yarn build
-  displayName: 'building packages'
+    lerna run scaffold-apps
+  displayName: 'scaffold-apps'
 - script: |
-    yarn lint-packages
-  displayName: 'linting packages'
+    yarn cache clean --all && yarn install --immutable
+  displayName: 'yarn install - refresh'
+- script: |
+    lerna run build --since $(branchName)
+  displayName: 'build apps - updated only'
+- script: |
+    lerna run lint --ignore create-sitecore-jss --since $(branchName)
+  displayName: 'lint apps - updated only'
 - script: |
     yarn coverage-packages
   displayName: 'running tests'
