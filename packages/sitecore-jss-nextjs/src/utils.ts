@@ -10,7 +10,7 @@ import { isEditorActive, resetEditorChromes } from '@sitecore-jss/sitecore-jss/u
  */
 export const getPublicUrl = (): string => {
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-
+  console.log('test');
   let url = process.env.PUBLIC_URL;
   if (url === undefined) {
     console.warn(
