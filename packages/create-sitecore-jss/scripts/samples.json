@@ -1,0 +1,34 @@
+﻿[
+  {
+    "initializers": [
+      "nextjs"
+    ],
+    "args": {
+      "appName": "nextjs",
+      "destination": "..\\..\\samples\\nextjs",
+      "fetchWith": "GraphQL",
+      "prerender": "SSR"
+    }
+  },
+  {
+    "initializers": [
+      "nextjs", "nextjs-styleguide"
+    ],
+    "args": {
+      "appName": "nextjs-styleguide",
+      "destination": "..\\..\\samples\\nextjs-styleguide",
+      "fetchWith": "GraphQL",
+      "prerender": "SSR"
+    }
+  },
+  {
+    "initializers": [
+      "react"
+    ],
+    "args": {
+      "appName": "react",
+      "destination": "..\\..\\samples\\react",
+      "fetchWith": "GraphQL"
+    }
+  }
+]
