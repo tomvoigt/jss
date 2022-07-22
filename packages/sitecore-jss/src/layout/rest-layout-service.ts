@@ -215,13 +215,17 @@ export class RestLayoutService extends LayoutServiceBase {
   protected setupReqHeaders(req: IncomingMessage) {
     return (reqConfig: AxiosRequestConfig) => {
       debug.layout('performing request header passing');
-      reqConfig.headers.common = {
-        ...reqConfig.headers.common,
+
+      if (!reqConfig.headers) return reqConfig;
+
+      reqConfig.headers = {
+        ...reqConfig.headers,
         ...(req.headers.cookie && { cookie: req.headers.cookie }),
         ...(req.headers.referer && { referer: req.headers.referer }),
         ...(req.headers['user-agent'] && { 'user-agent': req.headers['user-agent'] }),
         ...(req.connection.remoteAddress && { 'X-Forwarded-For': req.connection.remoteAddress }),
       };
+
       return reqConfig;
     };
   }

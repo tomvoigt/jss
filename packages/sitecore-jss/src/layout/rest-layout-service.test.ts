@@ -89,10 +89,14 @@ describe('RestLayoutService', () => {
     return service
       .fetchLayoutData('/home', 'da-DK', req, res)
       .then((layoutServiceData: LayoutServiceData & AxiosRequestConfig) => {
-        expect(layoutServiceData.headers.cookie).to.equal('test-cookie-value');
-        expect(layoutServiceData.headers.referer).to.equal('http://sctest');
-        expect(layoutServiceData.headers['user-agent']).to.equal('test-user-agent-value');
-        expect(layoutServiceData.headers['X-Forwarded-For']).to.equal('192.168.1.10');
+        expect(layoutServiceData.headers?.cookie).to.equal('test-cookie-value');
+        expect(layoutServiceData.headers?.referer).to.equal('http://sctest');
+        expect(layoutServiceData.headers && layoutServiceData.headers['user-agent']).to.equal(
+          'test-user-agent-value'
+        );
+        expect(layoutServiceData.headers && layoutServiceData.headers['X-Forwarded-For']).to.equal(
+          '192.168.1.10'
+        );
         expect(layoutServiceData.data).to.deep.equal({
           sitecore: {
             context: {},
@@ -146,10 +150,14 @@ describe('RestLayoutService', () => {
     return service
       .fetchLayoutData('/home', 'da-DK', req, res)
       .then((layoutServiceData: LayoutServiceData & AxiosRequestConfig) => {
-        expect(layoutServiceData.headers.cookie).to.equal('test-cookie-value');
-        expect(layoutServiceData.headers.referer).to.equal('http://sctest');
-        expect(layoutServiceData.headers['user-agent']).to.equal('test-user-agent-value');
-        expect(layoutServiceData.headers['X-Forwarded-For']).to.equal('192.168.1.10');
+        expect(layoutServiceData.headers?.cookie).to.equal('test-cookie-value');
+        expect(layoutServiceData.headers?.referer).to.equal('http://sctest');
+        expect(layoutServiceData.headers && layoutServiceData.headers['user-agent']).to.equal(
+          'test-user-agent-value'
+        );
+        expect(layoutServiceData.headers && layoutServiceData.headers['X-Forwarded-For']).to.equal(
+          '192.168.1.10'
+        );
         expect(layoutServiceData.data).to.deep.equal({
           sitecore: {
             context: {},
