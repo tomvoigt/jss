@@ -67,3 +67,4 @@ export {
 export { withEditorChromes } from './enhancers/withEditorChromes';
 export { withPlaceholder } from './enhancers/withPlaceholder';
 export { withDatasourceCheck } from './enhancers/withDatasourceCheck';
+export { withErrorBoundary, ErrorBoundary } from './enhancers/withErrorBoundary';
