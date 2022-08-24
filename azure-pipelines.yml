@@ -49,10 +49,10 @@ steps:
     yarn cache clean --all && yarn install --immutable
   displayName: 'yarn install - refresh'
 - script: |
-    lerna run build --since $targetBranch
+    lerna run build --since $(targetBranch)
   displayName: 'build apps - updated only'
 - script: |
-    lerna run lint --ignore create-sitecore-jss --since $targetBranch
+    lerna run lint --ignore create-sitecore-jss --since $(targetBranch)
   displayName: 'lint apps - updated only'
 - script: |
     yarn coverage-packages
