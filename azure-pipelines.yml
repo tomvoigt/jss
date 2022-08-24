@@ -61,7 +61,7 @@ steps:
     lerna run lint --ignore create-sitecore-jss --since $(branchToCompare) -- --fix
   displayName: 'lint apps - updated only'
 - script: |
-    lerna run build --ignore nextjs-* --since $(branchToCompare)
+    lerna run build --ignore nextjs-* --since $(branchToCompare) --include-dependencies
   displayName: 'build apps - updated only'
 - script: |
     yarn coverage-packages
