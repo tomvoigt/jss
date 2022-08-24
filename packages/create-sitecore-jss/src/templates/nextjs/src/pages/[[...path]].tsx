@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 <% if (prerender === 'SSG') { -%>
 import { GetStaticPaths, GetStaticProps } from 'next';
-<% } else if (prerender === 'SSR') { -%>
+<%}else if (prerender === 'SSR') { -%>
 import { GetServerSideProps } from 'next';
-<% } -%>
+<%}-%>
 import NotFound from 'src/NotFound';
 import Layout from 'src/Layout';
 import {
@@ -12,7 +12,7 @@ import {
   handleEditorFastRefresh,
   <% if (prerender === 'SSG') { -%>
   StaticPath,
-  <% } -%>
+<%}-%>
 } from '@sitecore-jss/sitecore-jss-nextjs';
 import { SitecorePageProps } from 'lib/page-props';
 import { sitecorePagePropsFactory } from 'lib/page-props-factory';
@@ -21,7 +21,7 @@ import { componentFactory, editingComponentFactory } from 'temp/componentFactory
 <% if (prerender === 'SSG') { -%>
 import { sitemapFetcher } from 'lib/sitemap-fetcher';
 
-<% } -%>
+<%}-%>
 
 const SitecorePage = ({ notFound, componentProps, layoutData }: SitecorePageProps): JSX.Element => {
   useEffect(() => {
