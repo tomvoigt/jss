@@ -58,7 +58,7 @@ steps:
     yarn install
   displayName: 'yarn install - refresh'
 - script: |
-    lerna run lint --ignore create-sitecore-jss --since $(branchToCompare) -- -- --fix
+    lerna run lint --ignore create-sitecore-jss --since $(branchToCompare) -- --fix
   displayName: 'lint apps - updated only'
 - script: |
     lerna run build --ignore nextjs-* --since $(branchToCompare)
