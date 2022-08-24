@@ -33,6 +33,7 @@ variables:
     branchName: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
   ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
     branchName: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
+  targetBranch: $[variables['System.PullRequest.TargetBranch']]
 
 steps:
 - task: NodeTool@0
@@ -48,10 +49,10 @@ steps:
     yarn cache clean --all && yarn install --immutable
   displayName: 'yarn install - refresh'
 - script: |
-    lerna run build --since $variables['Build.SourceBranch']
+    lerna run build --since $targetBranch
   displayName: 'build apps - updated only'
 - script: |
-    lerna run lint --ignore create-sitecore-jss --since $variables['Build.SourceBranch']
+    lerna run lint --ignore create-sitecore-jss --since $targetBranch
   displayName: 'lint apps - updated only'
 - script: |
     yarn coverage-packages
