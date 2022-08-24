@@ -28,13 +28,15 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
+  TestSourceBranch: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', 'refs/pull/') ]
+  TestTargetBranch: 'dev'
   shouldPublish: $[or(eq(variables['Build.SourceBranch'], 'refs/heads/dev'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))]
-  ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/') }}:
+  ${{ if startsWith(variables['TestSourceBranch'], 'refs/heads/') }}:
     branchName: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
     branchToCompare: $[variables['Build.SourceBranch']]
-  ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
+  ${{ if startsWith(variables['TestSourceBranch'], 'refs/pull/') }}:
     branchName: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
-    branchToCompare: $[variables['System.PullRequest.TargetBranch']]
+    branchToCompare: $[variables['TestTargetBranch']]
 
 # Some steps here scaffold jss apps and check if they build and lint correctly
 # For performance reasons we try to limit the number of packages being built and linted to those that were changed in current branch
