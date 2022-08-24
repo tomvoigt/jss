@@ -6,6 +6,8 @@ export const convertKebabCasetoCamelCase = (str: string) =>
     index === 0 ? letter.toLowerCase() : letter.substr(1).toUpperCase()
   );
 
+// test comments
+
 /**
  * https://facebook.github.io/react/docs/dom-elements.html
  * We are only concerned with style at the moment, which needs to be converted from string to object to satisfy React.
