@@ -52,6 +52,15 @@ steps:
     yarn cache clean --all && yarn install --immutable
   displayName: 'yarn install - initial'
 - script: |
+    yarn build
+  displayName: 'build packages'
+- script: |
+    yarn coverage-packages
+  displayName: 'running tests'
+  env: {
+    testEnv: 'ci'
+  }
+- script: |
     lerna run scaffold-apps
   displayName: 'scaffold apps'
 - script: |
@@ -61,14 +70,9 @@ steps:
     lerna run lint --ignore create-sitecore-jss --since $(branchToCompare) -- --fix
   displayName: 'lint apps - updated only'
 - script: |
-    lerna run build --ignore nextjs-* --since $(branchToCompare) --include-dependencies
+    lerna run build --ignore sample-nextjs-* --since $(branchToCompare) --include-dependencies
   displayName: 'build apps - updated only'
-- script: |
-    yarn coverage-packages
-  displayName: 'running tests'
-  env: {
-    testEnv: 'ci'
-  }
+
   #
   # LERNA VERSION
   # * Configure git with a commit user
