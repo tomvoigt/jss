@@ -28,12 +28,21 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
+  System.PullRequest.TargetBranch: 'dev'
+  Build.SourceBranch: 'refs/pull/'
   shouldPublish: $[or(eq(variables['Build.SourceBranch'], 'refs/heads/dev'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))]
   ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/') }}:
     branchName: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
+    branchToCompare: $[variables['Build.SourceBranch']]
   ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
     branchName: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
-  targetBranch: $[variables['System.PullRequest.TargetBranch']]
+    branchToCompare: $[variables['System.PullRequest.TargetBranch']]
+
+# Some steps here scaffold jss apps and check if they build and lint correctly
+# For performance reasons we try to limit the number of packages being built and linted to those that were changed in current branch
+# We use --since param from that to compare current branch to the target - and get only the changes that get pulled
+# We ignore nextjs apps in build command for now - nextjs needs to connect to Sitecore app to be built properly at the moment.
+# create-sitecore-jss gets ignored for lint as it fails with 'The command line is too long.' error.
 
 steps:
 - task: NodeTool@0
@@ -44,16 +53,16 @@ steps:
   displayName: 'yarn install - initial'
 - script: |
     lerna run scaffold-apps
-  displayName: 'scaffold-apps'
+  displayName: 'scaffold apps'
 - script: |
-    yarn cache clean --all && yarn install --immutable
+    yarn install
   displayName: 'yarn install - refresh'
 - script: |
-    lerna run build --since $(targetBranch)
-  displayName: 'build apps - updated only'
-- script: |
-    lerna run lint --ignore create-sitecore-jss --since $(targetBranch)
+    lerna run lint --ignore create-sitecore-jss --since $(branchToCompare) -- -- --fix
   displayName: 'lint apps - updated only'
+- script: |
+    lerna run build --ignore nextjs-* --since $(branchToCompare)
+  displayName: 'build apps - updated only'
 - script: |
     yarn coverage-packages
   displayName: 'running tests'
