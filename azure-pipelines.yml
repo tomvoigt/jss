@@ -29,7 +29,7 @@ pool:
 
 variables:
   TestSourceBranch: 'refs/pull/'
-  TestTargetBranch: 'dev'
+  TestTargetBranch: 'origin/dev'
   shouldPublish: $[or(eq(variables['Build.SourceBranch'], 'refs/heads/dev'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))]
   ${{ if startsWith(variables['TestSourceBranch'], 'refs/heads/') }}:
     branchName: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
@@ -72,10 +72,10 @@ steps:
     yarn install
   displayName: 'yarn install - refresh'
 - script: |
-    lerna run lint --ignore create-sitecore-jss --since ${branchToCompare} -- --fix
+    lerna run lint --ignore create-sitecore-jss --since $(branchToCompare) -- --fix
   displayName: 'lint apps - updated only'
 - script: |
-    lerna run build --ignore sample-nextjs-* --since ${branchToCompare} --include-dependencies
+    lerna run build --ignore sample-nextjs-* --since $(branchToCompare) --include-dependencies
   displayName: 'build apps - updated only'
 
   #
