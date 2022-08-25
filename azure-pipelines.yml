@@ -29,7 +29,7 @@ pool:
 
 variables:
   TestSourceBranch: 'refs/pull/'
-  TestTargetBranch: 'origin/dev'
+  TestTargetBranch: 'dev'
   shouldPublish: $[or(eq(variables['Build.SourceBranch'], 'refs/heads/dev'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))]
   ${{ if startsWith(variables['TestSourceBranch'], 'refs/heads/') }}:
     branchName: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
