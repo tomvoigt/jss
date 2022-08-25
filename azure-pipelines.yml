@@ -55,6 +55,8 @@ steps:
     yarn build
   displayName: 'build packages'
 - script: |
+    lerna run lint --since $(branchToCompare)
+- script: |
     yarn coverage-packages
   displayName: 'running tests'
   env: {
@@ -67,10 +69,10 @@ steps:
     yarn install
   displayName: 'yarn install - refresh'
 - script: |
-    lerna run lint --ignore create-sitecore-jss --since $(branchToCompare) -- --fix
+    lerna run lint --ignore create-sitecore-jss --since ${branchToCompare} -- --fix
   displayName: 'lint apps - updated only'
 - script: |
-    lerna run build --ignore sample-nextjs-* --since $(branchToCompare) --include-dependencies
+    lerna run build --ignore sample-nextjs-* --since ${branchToCompare} --include-dependencies
   displayName: 'build apps - updated only'
 
   #
