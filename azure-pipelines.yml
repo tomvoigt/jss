@@ -36,9 +36,9 @@ variables:
   ${{ if startsWith(variables['TestSourceBranch'], 'refs/pull/') }}:
     branchName: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
   ${{ if startsWith(variables['TestSourceBranch'], 'refs/pull/') }}:
-    branchToCompare: $(variables['System.PullRequest.TargetBranch'])
+    branchToCompare: $[ variables['TestTargetBranch'] ]
   ${{ if startsWith(variables['TestSourceBranch'], 'refs/heads/') }}:
-    branchToCompare: $(variables['Build.SourceBranch'])
+    branchToCompare: $[ variables['Build.SourceBranch'] ]
 
 # Some steps here scaffold jss apps and check if they build and lint correctly
 # For performance reasons we try to limit the number of packages being built and linted to those that were changed in current branch
