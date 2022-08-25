@@ -33,10 +33,10 @@ variables:
   shouldPublish: $[or(eq(variables['Build.SourceBranch'], 'refs/heads/dev'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))]
   ${{ if startsWith(variables['TestSourceBranch'], 'refs/heads/') }}:
     branchName: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
-    branchToCompare: $[variables['Build.SourceBranch']]
+    branchToCompare: $[ variables['Build.SourceBranch'] ]
   ${{ if startsWith(variables['TestSourceBranch'], 'refs/pull/') }}:
     branchName: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
-    branchToCompare: $[variables['System.PullRequest.TargetBranch']]
+    branchToCompare: $[ variables['System.PullRequest.TargetBranch'] ]
 
 # Some steps here scaffold jss apps and check if they build and lint correctly
 # For performance reasons we try to limit the number of packages being built and linted to those that were changed in current branch
@@ -56,6 +56,7 @@ steps:
   displayName: 'build packages'
 - script: |
     lerna run lint --since $(branchToCompare)
+  displayName: 'lint packages'
 - script: |
     yarn coverage-packages
   displayName: 'running tests'
