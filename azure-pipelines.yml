@@ -47,10 +47,10 @@ steps:
 - task: NodeTool@0
   inputs:
     versionSpec: '16.x'
-- powershell: |
-    $updatedPackagesRaw = lerna ls --since $(branchToCompare) --loglevel silent | Out-String
-    Write-Host "##vso[task.setvariable variable=updatedPackages;]$updatedPackagesRaw"
-    Write-Host $updatedPackagesRaw
+- bash: |
+    updatedPackagesRaw=$(lerna ls --since $(branchToCompare) --loglevel silent)
+    echo "##vso[task.setvariable variable=updatedPackages]$updatedPackagesRaw"
+    echo $updatedPackagesRaw
   displayName: 'get diff packages'
 - script: |
     echo $(updatedPackages)
