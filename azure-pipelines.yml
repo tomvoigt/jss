@@ -50,10 +50,10 @@ steps:
 - bash: |
     UPDATEDPACKAGES=$(lerna ls --since $(branchToCompare) --loglevel silent)
     echo "##vso[task.setvariable variable=updatedPackages;]${UPDATEDPACKAGES}"
-    echo ${UPDATEDPACKAGES}
+    echo "${UPDATEDPACKAGES}"
   displayName: 'get diff packages'
 - script: |
-    echo $(updatedPackages)
+    echo "$(updatedPackages)"
 - script: |
     yarn cache clean --all && yarn install --immutable
   displayName: 'yarn install - initial'
