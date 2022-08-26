@@ -47,13 +47,13 @@ steps:
 - task: NodeTool@0
   inputs:
     versionSpec: '16.x'
-- powershell: |
-    $updatedPackagesRaw = lerna ls --since $(branchToCompare) --loglevel silent | Out-String
-    Write-Host "##vso[task.setvariable variable=updatedPackages;]$updatedPackagesRaw"
-    Write-Host $cmdOutput
+- bash: |
+    updatedPackagesRaw = $(lerna ls --since $(branchToCompare) --loglevel silent)
+    echo "##vso[task.setvariable variable=updatedPackages;]${updatedPackagesRaw}"
+    echo "${updatedPackagesRaw}"
   displayName: 'get diff packages'
-- powershell: |
-    Write-Host $(updatedPackages)
+- script: |
+    echo $(updatedPackages)
 - script: |
     yarn cache clean --all && yarn install --immutable
   displayName: 'yarn install - initial'
