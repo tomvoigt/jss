@@ -48,9 +48,9 @@ steps:
   inputs:
     versionSpec: '16.x'
 - bash: |
-    updatedPackagesRaw = $(lerna ls --since $(branchToCompare) --loglevel silent)
-    echo "##vso[task.setvariable variable=updatedPackages;]${updatedPackagesRaw}"
-    echo "${updatedPackagesRaw}"
+    UPDATEDPACKAGES=$(lerna ls --since $(branchToCompare) --loglevel silent)
+    echo "##vso[task.setvariable variable=updatedPackages;]${UPDATEDPACKAGES}"
+    echo ${UPDATEDPACKAGES}
   displayName: 'get diff packages'
 - script: |
     echo $(updatedPackages)
