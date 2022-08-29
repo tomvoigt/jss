@@ -59,6 +59,10 @@ steps:
     echo $(testEcho)
   displayName: 'test display'
 - script: |
+    echo wow
+  displayName: 'conditional echo'
+  condition: contains(variables['updatedPackages'], '@sitecore-jss/sitecore-jss-nextjs')
+- script: |
     yarn cache clean --all && yarn install --immutable
   displayName: 'yarn install - initial'
 - script: |
@@ -76,8 +80,6 @@ steps:
 - script: |
     lerna run scaffold-apps
   displayName: 'scaffold apps'
-- bash: |
-
 - script: |
     yarn install
   displayName: 'yarn install - refresh'
