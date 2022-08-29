@@ -51,6 +51,7 @@ steps:
     versionSpec: '16.x'
 - powershell: |
     $updatedPackagesRaw = lerna ls --since $(testTarget) --loglevel silent | Out-String
+    $updatedPackagesRaw = $updatedPackagesRaw -replace "`t|`n|`r",""
     Write-Host "##vso[task.setvariable variable=updatedPackages;]$updatedPackagesRaw"
     Write-Host $updatedPackagesRaw
   displayName: 'get diff packages pshell'
