@@ -1,6 +1,5 @@
 import chalk from 'chalk';
 import { initRunner } from '../src/init-runner';
-// const templates = require('./templates.json');
 import samplesToSacffold from './samples.json';
 
 for (const sample of samplesToSacffold) {

@@ -13,7 +13,7 @@
   },
   {
     "initializers": [
-      "nextjs", "nextjs-styleguide-tracking"
+      "nextjs", "nextjs-styleguide", "nextjs-styleguide-tracking"
     ],
     "args": {
       "appName": "nextjs-styleguide",
