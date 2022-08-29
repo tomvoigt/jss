@@ -74,7 +74,7 @@ steps:
 - script: |
     yarn install
   displayName: 'yarn install - refresh'
-  - script: |
+- script: |
     lerna run lint --ignore create-sitecore-jss -- --fix
   displayName: 'lint apps all'
   condition: contains(variables['updatedPackages'], 'create-sitecore-jss')
