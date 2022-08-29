@@ -52,7 +52,7 @@ steps:
     lerna run lint --scope create-sitecore-jss
   displayName: 'lint create-sitecore-jss'
 - script: |
-    lerna run scaffold-apps
+    yarn scaffold-apps
   displayName: 'scaffold apps'
 - script: |
     yarn install
