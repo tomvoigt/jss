@@ -28,6 +28,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
+  testTarget: 'origin/dev...HEAD'
   shouldPublish: $[or(eq(variables['Build.SourceBranch'], 'refs/heads/dev'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))]
   ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/') }}:
     branchName: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
@@ -48,9 +49,9 @@ steps:
   inputs:
     versionSpec: '16.x'
 - script: |
-    updatedPackagesRaw=$($(lerna ls --since $(branchToCompare)) --loglevel silent)
+    updatedPackagesRaw=$($(lerna ls --since $(testTarget)) --loglevel silent)
     echo "##vso[task.setvariable variable=updatedPackages]$updatedPackagesRaw"
-    echo "$updatedPackagesRaw"
+
     echo "does this work at all?"
   displayName: 'get diff packages'
 - script: |
