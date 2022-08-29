@@ -49,11 +49,24 @@ steps:
 - task: NodeTool@0
   inputs:
     versionSpec: '16.x'
-- bash: |
+- powershell: |
+    try{
+      $updatedPackagesRaw = lerna ls --since $(testTarget) --loglevel silent | Out-String
+    }
+    catch{
+      "Well that didnt work"
+    }
+    $updatedPackagesRaw=lerna ls --since $(testTarget) --loglevel silent | Out-String
+    Write-Host "##vso[task.setvariable variable=updatedPackages;]$updatedPackagesRaw"
+    Write-Host "##vso[task.setvariable variable=testEcho;]123"
+    Write-Host $updatedPackagesRaw
+    Write-Host "does this work at all?"
+  displayName: 'get diff packages pshell'
+- script: |
     updatedPackagesRaw=$($(lerna ls --since $(testTarget) --loglevel silent))
-    echo "##vso[task.setvariable variable=updatedPackages]$(updatedPackagesRaw)"
+    echo "##vso[task.setvariable variable=updatedPackages]$updatedPackagesRaw"
     echo "##vso[task.setvariable variable=testEcho]123"
-    echo $(updatedPackagesRaw)
+    echo $updatedPackagesRaw
     echo "does this work at all?"
   displayName: 'get diff packages'
 - script: |
