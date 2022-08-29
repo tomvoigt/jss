@@ -49,7 +49,7 @@ steps:
 - task: NodeTool@0
   inputs:
     versionSpec: '16.x'
-- script: |
+- bash: |
     updatedPackagesRaw=$($(lerna ls --since $(testTarget) --loglevel silent))
     echo "##vso[task.setvariable variable=updatedPackages]$(updatedPackagesRaw)"
     echo "##vso[task.setvariable variable=testEcho]123"
