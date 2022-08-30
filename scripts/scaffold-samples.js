@@ -14,7 +14,7 @@ for (const sample of samplesToSacffold) {
     templates: sample.initializers,
     yes: true,
     force: true,
-    silent: false,
+    silent: true,
     noInstall: true,
   }
   initRunner(sample.initializers, scaffoldArgs);
