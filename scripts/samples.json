@@ -6,8 +6,7 @@
     "args": {
       "appName": "nextjs-vanilla",
       "fetchWith": "GraphQL",
-      "prerender": "SSR",
-      "silent": false
+      "prerender": "SSR"
     }
   },
   {

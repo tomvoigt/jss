@@ -56,7 +56,7 @@ steps:
   env:
     YARN_ENABLE_IMMUTABLE_INSTALLS: false
 - script: |
-    lerna run build --scope sample-* --ignore sample-nextjs*
+    lerna run build --scope sample-* --ignore sample-nextjs* --ignore sample-react
   displayName: 'build apps'
 - script: |
     lerna run lint --scope sample-* -- --fix
