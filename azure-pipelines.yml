@@ -34,25 +34,42 @@ variables:
   ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
     branchName: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
 
+# Some steps here scaffold jss apps and check if they build and lint correctly
+# We ignore nextjs apps in build command for now - nextjs needs to connect to Sitecore app to be built properly at the moment.
+# using --since for learna commands could be nice but it introduces a lot of branching execution paths that need to be covered
+ 
 steps:
 - task: NodeTool@0
   inputs:
     versionSpec: '16.x'
 - script: |
     yarn cache clean --all && yarn install --immutable
-  displayName: 'yarn install'
+  displayName: 'yarn install - initial'
+- script: |
+    lerna run lint
+  displayName: 'lint packages'
 - script: |
     yarn build
-  displayName: 'building packages'
-- script: |
-    yarn lint-packages
-  displayName: 'linting packages'
+  displayName: 'build packages'
 - script: |
     yarn coverage-packages
   displayName: 'running tests'
   env: {
     testEnv: 'ci'
   }
+- script: |
+    yarn scaffold-apps
+  displayName: 'scaffold apps'
+- script: |
+    yarn install
+  displayName: 'yarn install - refresh'
+- script: |
+    lerna run lint --scope sample-*
+  displayName: 'lint apps'
+- script: |
+    lerna build --scope sample-* --ignore sample-nextjs*
+  displayName: 'build apps'
+
   #
   # LERNA VERSION
   # * Configure git with a commit user
