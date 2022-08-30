@@ -69,7 +69,7 @@ steps:
     lerna run lint --scope sample-* -- --fix
   displayName: 'lint apps'
 - script: |
-    lerna build --scope sample-* --ignore sample-nextjs*
+    lerna run build --scope sample-* --ignore sample-nextjs*
   displayName: 'build apps'
 
   #
