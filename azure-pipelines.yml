@@ -46,17 +46,7 @@ steps:
     yarn cache clean --all && yarn install --immutable
   displayName: 'yarn install - initial'
 - script: |
-    lerna run lint
-  displayName: 'lint packages'
-- script: |
-    yarn build
-  displayName: 'build packages'
-- script: |
-    yarn coverage-packages
-  displayName: 'running tests'
-  env: {
-    testEnv: 'ci'
-  }
+    lerna run build --scope create-sitecore-jss
 - script: |
     yarn scaffold-apps
   displayName: 'scaffold apps'
@@ -71,6 +61,14 @@ steps:
 - script: |
     lerna run build --scope sample-* --ignore sample-nextjs*
   displayName: 'build apps'
+- script: |
+    yarn coverage-packages
+  displayName: 'running tests'
+  env: {
+    testEnv: 'ci'
+  }
+
+
 
   #
   # LERNA VERSION
