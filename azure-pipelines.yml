@@ -37,7 +37,7 @@ variables:
 # Some steps here scaffold jss apps and check if they build and lint correctly
 # We ignore nextjs apps in build command for now - nextjs needs to connect to Sitecore app to be built properly at the moment.
 # using --since for learna commands could be nice but it introduces a lot of branching execution paths that need to be covered
- 
+
 steps:
 - task: NodeTool@0
   inputs:
@@ -56,10 +56,10 @@ steps:
   env:
     YARN_ENABLE_IMMUTABLE_INSTALLS: false
 - script: |
-    lerna run build --scope sample-* --ignore sample-nextjs* --ignore sample-react
+    lerna run build --ignore sample-nextjs* --ignore create-sitecore-jss
   displayName: 'build apps'
 - script: |
-    lerna run lint --scope sample-* -- --fix
+    lerna run lint -- --fix
   displayName: 'lint apps'
 - script: |
     yarn coverage-packages
