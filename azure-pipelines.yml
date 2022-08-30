@@ -36,8 +36,7 @@ variables:
 
 # Some steps here scaffold jss apps and check if they build and lint correctly
 # We ignore nextjs apps in build command for now - nextjs needs to connect to Sitecore app to be built properly at the moment.
-# create-sitecore-jss is linted separately at first. If we scaffold apps and lint everything will fail on create-sitecore-jss with 'The command line is too long.' error.
-# using --since could be nice but it introduces a lot of branching execution paths that need to be covered
+# using --since for learna commands could be nice but it introduces a lot of branching execution paths that need to be covered
 
 steps:
 - task: NodeTool@0
@@ -47,10 +46,18 @@ steps:
 - script: |
     yarn cache clean --all && yarn install --immutable
   displayName: 'yarn install - initial'
-
 - script: |
-    lerna run lint --scope create-sitecore-jss
-  displayName: 'lint create-sitecore-jss'
+    lerna run lint
+  displayName: 'lint packages'
+- script: |
+    yarn build
+  displayName: 'build packages'
+- script: |
+    yarn coverage-packages
+  displayName: 'running tests'
+  env: {
+    testEnv: 'ci'
+  }
 - script: |
     yarn scaffold-apps
   displayName: 'scaffold apps'
@@ -58,17 +65,11 @@ steps:
     yarn install
   displayName: 'yarn install - refresh'
 - script: |
-    lerna run lint --ignore create-sitecore-jss
-  displayName: 'lint packages and apps'
+    lerna run lint --scope samples-*
+  displayName: 'lint apps'
 - script: |
-    yarn build --ignore sample-nextjs*
-  displayName: 'build packages and apps'
-- script: |
-    yarn coverage-packages
-  displayName: 'running tests'
-  env: {
-    testEnv: 'ci'
-  }
+    lerna build --scope samples-* --ignore sample-nextjs*
+  displayName: 'build apps'
 
   #
   # LERNA VERSION
