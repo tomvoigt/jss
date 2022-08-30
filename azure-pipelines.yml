@@ -46,6 +46,9 @@ steps:
     yarn cache clean --all && yarn install --immutable
   displayName: 'yarn install - initial'
 - script: |
+    yarn scaffold-apps
+  displayName: 'scaffold apps'
+- script: |
     lerna run lint
   displayName: 'lint packages'
 - script: |
@@ -57,18 +60,6 @@ steps:
   env: {
     testEnv: 'ci'
   }
-- script: |
-    yarn scaffold-apps
-  displayName: 'scaffold apps'
-- script: |
-    yarn install
-  displayName: 'yarn install - refresh'
-- script: |
-    lerna run lint --scope sample-*
-  displayName: 'lint apps'
-- script: |
-    lerna build --scope sample-* --ignore sample-nextjs*
-  displayName: 'build apps'
 
   #
   # LERNA VERSION
