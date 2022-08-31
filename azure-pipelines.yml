@@ -56,11 +56,11 @@ steps:
   env:
     YARN_ENABLE_IMMUTABLE_INSTALLS: false
 - script: |
+    lerna run lint --ignore create-sitecore-jss -- --fix
+  displayName: 'lint apps'
+- script: |
     lerna run build --ignore sample-nextjs*
   displayName: 'build apps'
-- script: |
-    lerna run lint -- --fix
-  displayName: 'lint apps'
 - script: |
     yarn coverage-packages
   displayName: 'running tests'
