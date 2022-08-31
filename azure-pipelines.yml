@@ -56,7 +56,7 @@ steps:
   env:
     YARN_ENABLE_IMMUTABLE_INSTALLS: false
 - script: |
-    lerna run build --ignore sample-nextjs* --ignore create-sitecore-jss --ignore sample-react
+    lerna run build --ignore sample-nextjs* --ignore sample-react*
   displayName: 'build apps'
 - script: |
     lerna run lint -- --fix
