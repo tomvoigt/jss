@@ -35,7 +35,7 @@ variables:
     branchName: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
 
 # Some steps here scaffold jss apps and check if they build and lint correctly
-# We ignore nextjs apps in build command for now - nextjs needs to connect to Sitecore app to be built properly at the moment.
+# build apps step currently excluded: RAV apps have issues with yarn build, nextjs has some with all builds without Sitecore connection
 # using --since for learna commands could be nice but it introduces a lot of branching execution paths that need to be covered
 # TODO: add step for lerna run build --scope sample-* when react and nextjs yarn build issues are resolved
 
