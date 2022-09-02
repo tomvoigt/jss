@@ -59,16 +59,27 @@ steps:
     testEnv: 'ci'
   }
 - script: |
-    yarn scaffold-apps
-  displayName: 'scaffold apps'
+    yarn scaffold-samples
+  displayName: 'scaffold samples'
 - script: |
     yarn install
   displayName: 'yarn install - refresh'
   env:
     YARN_ENABLE_IMMUTABLE_INSTALLS: false
 - script: |
-    lerna run lint --ignore create-sitecore-jss -- --fix
-  displayName: 'lint apps'
+    lerna run lint --scope sample-* -- --fix
+  displayName: 'lint samples'
+
+- script: |
+    yarn cleanup-samples
+  displayName: 'cleanup samples'
+
+- script: |
+    lerna version prerelease 
+  displayName: 'prerel test'
+  env:
+    YARN_ENABLE_IMMUTABLE_INSTALLS: false
+
 
   #
   # LERNA VERSION
