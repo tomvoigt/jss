@@ -72,7 +72,6 @@ steps:
 
 - script: |
     yarn cleanup-samples
-    git reset –hard
   displayName: 'cleanup samples'
 
 - script: |
@@ -80,6 +79,7 @@ steps:
     git config user.name "Automated Build"
     git remote set-url origin https://$GITHUB_PAT_ENV@github.com/Sitecore/jss.git
     git checkout $(branchName)
+    git reset –hard
     lerna version prerelease 
   displayName: 'prerel test'
   env:
