@@ -75,6 +75,10 @@ steps:
   displayName: 'cleanup samples'
 
 - script: |
+    git config user.email builds@sitecore.com
+    git config user.name "Automated Build"
+    git remote set-url origin https://$GITHUB_PAT_ENV@github.com/Sitecore/jss.git
+    git checkout $(branchName)
     lerna version prerelease 
   displayName: 'prerel test'
   env:
