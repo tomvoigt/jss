@@ -56,10 +56,13 @@ export class PersonalizeMiddleware {
     // NOTE: same here, we provide NativeDataFetcher for compatibility on Next.js Edge Runtime
     this.cdpService = new CdpService({
       ...config.cdpConfig,
-      dataFetcherResolver: <T>({ timeout }: { timeout: number }) => {
+      dataFetcherResolver: <T>(fetcherConfig: {
+        timeout: number;
+        headers?: Record<string, string>;
+      }) => {
         const fetcher = new NativeDataFetcher({
           debugger: debug.personalize,
-          timeout,
+          ...fetcherConfig,
         });
         return (url: string, data?: unknown) => fetcher.fetch<T>(url, data);
       },
@@ -98,10 +101,8 @@ export class PersonalizeMiddleware {
   }
 
   protected getExperienceParams(req: NextRequest): ExperienceParams {
-    const { ua } = userAgent(req);
     return {
       referrer: req.referrer,
-      ua: ua ?? null,
       utm: {
         campaign: req.nextUrl.searchParams.get('utm_campaign'),
         content: req.nextUrl.searchParams.get('utm_content'),
@@ -193,11 +194,13 @@ export class PersonalizeMiddleware {
     }
 
     // Execute targeted experience in CDP
+    const { ua } = userAgent(req);
     const params = this.getExperienceParams(req);
     const variantId = await this.cdpService.executeExperience(
       personalizeInfo.contentId,
-      params,
-      browserId
+      browserId,
+      ua,
+      params
     );
 
     if (!variantId) {
