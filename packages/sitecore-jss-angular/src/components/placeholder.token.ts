@@ -1,9 +1,24 @@
 import { InjectionToken, Type } from '@angular/core';
+import {
+  ActivatedRouteSnapshot,
+  Data,
+  Resolve,
+  RouterStateSnapshot,
+  UrlTree,
+} from '@angular/router';
+import { ComponentRendering } from '@sitecore-jss/sitecore-jss';
+import { Observable } from 'rxjs';
+import { ComponentFactoryResult } from '../jss-component-factory.service';
 
 /** Registers a statically loaded component */
 export class ComponentNameAndType {
   name: string;
   type: Type<unknown>;
+  canActivate?:
+    | JssCanActivate
+    | Type<JssCanActivate>
+    | Array<JssCanActivate | Type<JssCanActivate>>;
+  resolve?: { [key: string]: JssResolve<any> | Type<JssResolve<any>> };
 }
 
 /** Registers a lazily loaded component by name and module to lazy load when it's needed */
@@ -15,6 +30,11 @@ export interface ComponentNameAndModule {
    * e.g. () => import('./path/to/lazyloadedcomponent.module').then(m => m.LazyLoadedComponentModuleExportName)
    */
   loadChildren: () => Promise<Type<unknown>>;
+  canActivate?:
+    | JssCanActivate
+    | Type<JssCanActivate>
+    | Array<JssCanActivate | Type<JssCanActivate>>;
+  resolve?: { [key: string]: Resolve<any> | Type<Resolve<any>> };
 }
 
 /**
@@ -45,3 +65,35 @@ export const PLACEHOLDER_MISSING_COMPONENT_COMPONENT = new InjectionToken<Type<u
 export const DYNAMIC_COMPONENT = new InjectionToken<Type<unknown> | { [s: string]: unknown }>(
   'Sc.placeholder.dynamicComponent'
 );
+
+export type GuardResolver = (result: ComponentFactoryResult[]) => Promise<ComponentFactoryResult[]>;
+
+export const GUARD_RESOLVER = new InjectionToken<GuardResolver>('Sc.placeholder.guardResolver');
+
+export type DataResolver = (
+  result: ComponentFactoryResult[]
+) => Promise<Array<{ factory: ComponentFactoryResult; data: Data }>>;
+
+export const DATA_RESOLVER = new InjectionToken<DataResolver>('Sc.placeholder.dataResolver');
+
+export interface GuardInput {
+  activatedRoute: ActivatedRouteSnapshot;
+  routerState: RouterStateSnapshot;
+  rendering: ComponentRendering;
+}
+
+export interface JssCanActivate {
+  canActivate(
+    input: GuardInput
+  ):
+    | Observable<boolean | UrlTree | string | string[]>
+    | Promise<boolean | UrlTree | string | string[]>
+    | boolean
+    | UrlTree
+    | string
+    | string[];
+}
+
+export interface JssResolve<T> {
+  resolve(input: GuardInput): Observable<T> | Promise<T> | T;
+}

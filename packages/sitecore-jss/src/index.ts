@@ -2,38 +2,26 @@
 // and to keep react-native working with cjs modules.
 // This will very likely change again when sub-modules are added.
 
-import * as mediaApi from './media-api';
 import * as constants from './constants';
+import * as mediaApi from './media-api';
 
-export { mediaApi, constants };
-export { default as debug, Debugger } from './debug';
-export { HttpDataFetcher, HttpResponse, fetchData } from './data-fetcher';
+export { AxiosDataFetcher, AxiosDataFetcherConfig } from './axios-fetcher';
+export { CacheClient, CacheOptions, MemoryCacheClient } from './cache-client';
+export { fetchData, HttpDataFetcher, HttpResponse } from './data-fetcher';
+export { Debugger, default as debug } from './debug';
+export {
+  AppRootQueryResult,
+  getAppRootId,
+  SearchQueryResult,
+  SearchQueryService,
+  SearchQueryVariables,
+  SearchServiceConfig,
+} from './graphql';
 export {
   GraphQLClient,
   GraphQLRequestClient,
   GraphQLRequestClientConfig,
 } from './graphql-request-client';
-export { AxiosDataFetcher, AxiosDataFetcherConfig } from './axios-fetcher';
-export {
-  AppRootQueryResult,
-  SearchQueryResult,
-  SearchQueryService,
-  SearchQueryVariables,
-  SearchServiceConfig,
-  getAppRootId,
-} from './graphql';
-export {
-  ExperienceEditor,
-  HorizonEditor,
-  isEditorActive,
-  isExperienceEditorActive,
-  isServer,
-  resetEditorChromes,
-  resetExperienceEditorChromes,
-  resolveUrl,
-} from './utils';
-export { CacheClient, CacheOptions, MemoryCacheClient } from './cache-client';
-
 export {
   DictionaryPhrases,
   DictionaryService,
@@ -44,32 +32,39 @@ export {
   RestDictionaryServiceConfig,
   RestDictionaryServiceData,
 } from './i18n';
-
+export { GraphQLLayoutService, GraphQLLayoutServiceConfig } from './layout/graphql-layout-service';
+export { LayoutService } from './layout/layout-service';
 // layout
 export {
-  LayoutServiceData,
-  LayoutServicePageState,
-  LayoutServiceContext,
-  LayoutServiceContextData,
-  RouteData,
-  PlaceholderData,
-  ComponentRendering,
-  HtmlElementRendering,
-  Field,
-  Item,
-  PlaceholdersData,
   ComponentFields,
   ComponentParams,
+  ComponentRendering,
+  Field,
+  HtmlElementRendering,
+  Item,
+  LayoutServiceContext,
+  LayoutServiceContextData,
+  LayoutServiceData,
+  LayoutServicePageState,
+  PlaceholderData,
+  PlaceholdersData,
+  RouteData,
 } from './layout/models';
-
-export { getFieldValue, getChildPlaceholder } from './layout/utils';
-
-export { LayoutService } from './layout/layout-service';
-
 export {
+  DataFetcherResolver,
   RestLayoutService,
   RestLayoutServiceConfig,
-  DataFetcherResolver,
 } from './layout/rest-layout-service';
-
-export { GraphQLLayoutService, GraphQLLayoutServiceConfig } from './layout/graphql-layout-service';
+export { getChildPlaceholder, getFieldValue } from './layout/utils';
+export {
+  ExperienceEditor,
+  HorizonEditor,
+  isAbsoluteUrl,
+  isEditorActive,
+  isExperienceEditorActive,
+  isServer,
+  resetEditorChromes,
+  resetExperienceEditorChromes,
+  resolveUrl,
+} from './utils';
+export { mediaApi, constants };

@@ -1,17 +1,19 @@
 import {
+  Compiler,
   ComponentFactory,
   Inject,
   Injectable,
   Injector,
-  Type,
-  Compiler,
   NgModuleFactory,
+  Type,
 } from '@angular/core';
 import { ComponentRendering, HtmlElementRendering } from '@sitecore-jss/sitecore-jss';
 import {
   ComponentNameAndModule,
   ComponentNameAndType,
   DYNAMIC_COMPONENT,
+  JssCanActivate,
+  JssResolve,
   PLACEHOLDER_COMPONENTS,
   PLACEHOLDER_LAZY_COMPONENTS,
 } from './components/placeholder.token';
@@ -24,6 +26,11 @@ export interface ComponentFactoryResult {
   componentDefinition: ComponentRendering | HtmlElementRendering;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   componentFactory?: ComponentFactory<any>;
+  canActivate?:
+    | JssCanActivate
+    | Type<JssCanActivate>
+    | Array<JssCanActivate | Type<JssCanActivate>>;
+  resolve?: { [key: string]: JssResolve<any> | Type<JssResolve<any>> };
 }
 
 @Injectable()
