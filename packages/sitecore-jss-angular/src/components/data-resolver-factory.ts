@@ -1,10 +1,10 @@
 import { Injector, Type } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ComponentRendering } from '@sitecore-jss/sitecore-jss';
 import { take } from 'rxjs/operators';
 import { ComponentFactoryResult } from '../jss-component-factory.service';
 import { wrapIntoObservable } from '../utils';
 import { JssResolve } from './placeholder.token';
-import { ComponentRendering } from '@sitecore-jss/sitecore-jss';
 
 export function dataResolverFactory(
   injector: Injector,
@@ -18,11 +18,13 @@ export function dataResolverFactory(
   function _collectResolverInstances(
     factory: ComponentFactoryResult
   ): Array<[string, JssResolve<any>]> {
+    // eslint-disable-next-line eqeqeq
     if (factory.resolve != null) {
       const resolve = factory.resolve;
-      return Object.keys(factory.resolve).map(
-        (key): [string, JssResolve<any>] => [key, _getResolverInstance(resolve[key])]
-      );
+      return Object.keys(factory.resolve).map((key): [string, JssResolve<any>] => [
+        key,
+        _getResolverInstance(resolve[key]),
+      ]);
     }
 
     return [];

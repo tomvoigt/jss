@@ -7,9 +7,9 @@ import {
   Output,
 } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ComponentRendering } from '@sitecore-jss/sitecore-jss';
 import { By } from '@angular/platform-browser';
 import { SpyNgModuleFactoryLoader } from '@angular/router/testing';
+import { ComponentRendering } from '@sitecore-jss/sitecore-jss';
 
 import { JssModule } from '../lib.module';
 
@@ -271,12 +271,12 @@ describe('<sc-placeholder />', () => {
   `,
 })
 class TestParentComponent {
-  clickMessage = '';
   @Input() rendering: ComponentRendering;
   @Input() name: string;
   @Input() set childMessage(message: string) {
     this.inputs.childMessage = message;
   }
+  clickMessage = '';
   public inputs = {
     childMessage: '',
     childNumber: () => 40 + 2,

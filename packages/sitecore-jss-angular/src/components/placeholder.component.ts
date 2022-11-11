@@ -56,13 +56,6 @@ function getPlaceholder(rendering: ComponentRendering, name: string) {
   `,
 })
 export class PlaceholderComponent implements OnInit, OnChanges, DoCheck, OnDestroy {
-  private _inputs: { [key: string]: unknown };
-  private _differ: KeyValueDiffer<string, unknown>;
-  private _componentInstances: { [prop: string]: unknown }[] = [];
-  private destroyed = false;
-  private parentStyleAttribute = '';
-  public isLoading = true;
-
   @Input() name?: string;
   @Input() rendering: ComponentRendering;
   @Input() renderings?: Array<ComponentRendering | HtmlElementRendering>;
@@ -71,11 +64,19 @@ export class PlaceholderComponent implements OnInit, OnChanges, DoCheck, OnDestr
   @Output()
   loaded = new EventEmitter<string | undefined>();
 
-  @ViewChild('view', { read: ViewContainerRef, static: true }) private view: ViewContainerRef;
   @ContentChild(RenderEachDirective, { static: true }) renderEachTemplate: RenderEachDirective;
   @ContentChild(RenderEmptyDirective, { static: true }) renderEmptyTemplate: RenderEmptyDirective;
   @ContentChild(PlaceholderLoadingDirective, { static: true })
   placeholderLoading?: PlaceholderLoadingDirective;
+  @ViewChild('view', { read: ViewContainerRef, static: true }) private view: ViewContainerRef;
+
+  public isLoading = true;
+
+  private _inputs: { [key: string]: unknown };
+  private _differ: KeyValueDiffer<string, unknown>;
+  private _componentInstances: { [prop: string]: unknown }[] = [];
+  private destroyed = false;
+  private parentStyleAttribute = '';
 
   @Input()
   set inputs(value: { [key: string]: unknown }) {

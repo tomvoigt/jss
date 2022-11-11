@@ -16,15 +16,13 @@ import { RichTextField } from './rendering-field';
   selector: '[scGenericRichText]',
 })
 export class GenericRichTextDirective implements OnChanges {
-  private viewRef: EmbeddedViewRef<HTMLElement>;
-
-  // tslint:disable-next-line:no-input-rename
   @Input('scGenericRichTextEditable')
   editable = true;
 
-  // tslint:disable-next-line:no-input-rename
   @Input('scGenericRichText')
   field: RichTextField;
+
+  private viewRef: EmbeddedViewRef<HTMLElement>;
 
   constructor(
     private viewContainer: ViewContainerRef,
@@ -34,6 +32,7 @@ export class GenericRichTextDirective implements OnChanges {
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
+    // eslint-disable-next-line dot-notation
     if (changes['field'] || changes['editable']) {
       if (!this.viewRef) {
         this.viewContainer.clear();
@@ -53,14 +52,16 @@ export class GenericRichTextDirective implements OnChanges {
     const html = field.editable && this.editable ? field.editable : field.value;
     this.viewRef.rootNodes.forEach((node) => {
       node.innerHTML = html;
-      if(node.querySelectorAll != null) {
+      // eslint-disable-next-line eqeqeq
+      if (node.querySelectorAll != null) {
         const links: NodeListOf<HTMLLinkElement> = node.querySelectorAll('a[href]');
         const linksArray: Array<HTMLLinkElement> = [].slice.call(links);
 
         linksArray.forEach((link) => {
           const href = link.getAttribute('href');
           const target = link.getAttribute('target');
-          
+
+          // eslint-disable-next-line eqeqeq
           if (href != null && !isAbsoluteUrl(href) && target !== '_blank' && target !== '_top') {
             this.renderer.listen(link, 'click', (event) => {
               this.router.navigateByUrl(href);

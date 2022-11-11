@@ -12,13 +12,13 @@ import { LinkField } from './rendering-field';
 
 @Directive({ selector: '[scLink]' })
 export class LinkDirective implements OnChanges {
-  private inlineRef: HTMLSpanElement | null = null;
-
   @Input('scLinkEditable') editable = true;
 
   @Input('scLinkAttrs') attrs: { [attr: string]: string } = {};
 
   @Input('scLink') field: LinkField;
+
+  private inlineRef: HTMLSpanElement | null = null;
 
   constructor(
     protected viewContainer: ViewContainerRef,
@@ -36,18 +36,6 @@ export class LinkDirective implements OnChanges {
       }
 
       this.updateView();
-    }
-  }
-
-  private updateView() {
-    const field = this.field;
-    if (this.editable && field && field.editableFirstPart && field.editableLastPart) {
-      this.renderInlineWrapper(field.editableFirstPart, field.editableLastPart);
-    } else if (field && (field.href || field.value)) {
-      const props = field.href ? field : field.value;
-      const linkText = field.text || field.value?.text || field.href || field.value?.href;
-      const mergedAttrs = { ...props, ...this.attrs };
-      this.renderTemplate(mergedAttrs, linkText);
     }
   }
 
@@ -81,6 +69,18 @@ export class LinkDirective implements OnChanges {
         node.textContent = linkText;
       }
     });
+  }
+
+  private updateView() {
+    const field = this.field;
+    if (this.editable && field && field.editableFirstPart && field.editableLastPart) {
+      this.renderInlineWrapper(field.editableFirstPart, field.editableLastPart);
+    } else if (field && (field.href || field.value)) {
+      const props = field.href ? field : field.value;
+      const linkText = field.text || field.value?.text || field.href || field.value?.href;
+      const mergedAttrs = { ...props, ...this.attrs };
+      this.renderTemplate(mergedAttrs, linkText);
+    }
   }
 
   private renderInlineWrapper(editableFirstPart: string, editableLastPart: string) {

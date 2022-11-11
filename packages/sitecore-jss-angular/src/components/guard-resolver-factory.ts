@@ -1,28 +1,43 @@
 import { Injector, Type } from '@angular/core';
 import { ActivatedRoute, Router, UrlTree } from '@angular/router';
-import { take, mergeMap } from 'rxjs/operators';
+import { ComponentRendering } from '@sitecore-jss/sitecore-jss';
+import { of, throwError } from 'rxjs';
+import { mergeMap, take } from 'rxjs/operators';
 import { ComponentFactoryResult } from '../jss-component-factory.service';
 import { wrapIntoObservable } from '../utils';
 import { JssCanActivate } from './placeholder.token';
-import { ComponentRendering } from '@sitecore-jss/sitecore-jss';
-import { throwError, of } from 'rxjs';
 
+/**
+ * @param value
+ */
 function isRedirectValue(
   value: boolean | string | string[] | UrlTree
 ): value is string | string[] | UrlTree {
   return value instanceof UrlTree || typeof value === 'string' || Array.isArray(value);
 }
 
+/**
+ * @param injector
+ * @param activatedRoute
+ * @param router
+ */
 export function guardResolverFactory(
   injector: Injector,
   activatedRoute: ActivatedRoute,
   router: Router
 ) {
+  /**
+   * @param guard
+   */
   function _getGuardInstance(guard: JssCanActivate | Type<JssCanActivate>) {
     return 'canActivate' in guard ? guard : injector.get(guard);
   }
 
+  /**
+   * @param factory
+   */
   function _collectGuardInstances(factory: ComponentFactoryResult): JssCanActivate[] {
+    // eslint-disable-next-line eqeqeq
     if (factory.canActivate != null) {
       return Array.isArray(factory.canActivate)
         ? factory.canActivate.map(_getGuardInstance)
@@ -32,6 +47,10 @@ export function guardResolverFactory(
     return [];
   }
 
+  /**
+   * @param guard
+   * @param factory
+   */
   function _resolveGuard(guard: JssCanActivate, factory: ComponentFactoryResult) {
     const guardValue = guard.canActivate({
       activatedRoute: activatedRoute.snapshot,

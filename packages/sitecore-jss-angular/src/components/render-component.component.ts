@@ -33,13 +33,14 @@ import { isRawRendering } from './rendering';
   `,
 })
 export class RenderComponentComponent implements OnChanges {
+  @Input() rendering: ComponentRendering | HtmlElementRendering;
+  @Input() outputs: { [k: string]: (eventType: unknown) => void };
+
+  @ViewChild('view', { read: ViewContainerRef, static: true }) private view: ViewContainerRef;
+
   private _inputs: { [key: string]: unknown };
   private _differ: KeyValueDiffer<string, unknown>;
   private destroyed = false;
-
-  @Input() rendering: ComponentRendering | HtmlElementRendering;
-  @Input() outputs: { [k: string]: (eventType: unknown) => void };
-  @ViewChild('view', { read: ViewContainerRef, static: true }) private view: ViewContainerRef;
 
   @Input()
   set inputs(value: { [key: string]: unknown }) {
