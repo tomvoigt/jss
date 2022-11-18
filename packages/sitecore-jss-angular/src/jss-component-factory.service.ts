@@ -55,24 +55,19 @@ export class JssComponentFactoryService {
     }
   }
 
-  // Needs refactoring
   private loadModuleFactory(loadChildren: LoadChildren): Promise<NgModuleFactory<any>> {
-    if (typeof loadChildren === 'string') {
-      return this.loader.load(loadChildren);
-    } else {
-      return wrapIntoObservable(loadChildren())
-        .pipe(
-          mergeMap((t: unknown) => {
-            if (t instanceof NgModuleFactory) {
-              return of(t);
-            } else {
-              return from(this.compiler.compileModuleAsync(t));
-            }
-          }),
-          take(1)
-        )
-        .toPromise();
-    }
+    return wrapIntoObservable(loadChildren())
+      .pipe(
+        mergeMap((t: unknown) => {
+          if (t instanceof NgModuleFactory) {
+            return of(t);
+          } else {
+            return from(this.compiler.compileModuleAsync(t));
+          }
+        }),
+        take(1)
+      )
+      .toPromise();
   }
 
   getComponent(component: ComponentRendering): Promise<ComponentFactoryResult> {
