@@ -1,16 +1,12 @@
 import {
-  Compiler,
   ComponentFactory,
+  createNgModuleRef,
   Inject,
   Injectable,
   Injector,
-  NgModuleFactory,
   Type,
 } from '@angular/core';
-import { LoadChildren } from '@angular/router';
 import { ComponentRendering, HtmlElementRendering } from '@sitecore-jss/sitecore-jss';
-import { from, of } from 'rxjs';
-import { mergeMap, take } from 'rxjs/operators';
 import {
   ComponentNameAndModule,
   ComponentNameAndType,
@@ -22,7 +18,6 @@ import {
 } from './components/placeholder.token';
 import { RawComponent } from './components/raw.component';
 import { isRawRendering } from './components/rendering';
-import { wrapIntoObservable } from './utils';
 export interface ComponentFactoryResult {
   componentImplementation?: Type<any>;
   componentDefinition: ComponentRendering | HtmlElementRendering;
@@ -41,7 +36,6 @@ export class JssComponentFactoryService {
 
   constructor(
     private injector: Injector,
-    private compiler: Compiler,
     @Inject(PLACEHOLDER_COMPONENTS) private components: ComponentNameAndType[],
     @Inject(PLACEHOLDER_LAZY_COMPONENTS) private lazyComponents: ComponentNameAndModule[]
   ) {
@@ -53,21 +47,6 @@ export class JssComponentFactoryService {
     if (this.lazyComponents) {
       this.lazyComponents.forEach((c) => this.lazyComponentMap.set(c.path, c));
     }
-  }
-
-  private loadModuleFactory(loadChildren: LoadChildren): Promise<NgModuleFactory<any>> {
-    return wrapIntoObservable(loadChildren())
-      .pipe(
-        mergeMap((t: unknown) => {
-          if (t instanceof NgModuleFactory) {
-            return of(t);
-          } else {
-            return from(this.compiler.compileModuleAsync(t));
-          }
-        }),
-        take(1)
-      )
-      .toPromise();
   }
 
   getComponent(component: ComponentRendering): Promise<ComponentFactoryResult> {
@@ -84,9 +63,9 @@ export class JssComponentFactoryService {
     const lazyComponent = this.lazyComponentMap.get(component.componentName);
 
     if (lazyComponent) {
-      return this.loadModuleFactory(lazyComponent.loadChildren).then((ngModuleFactory) => {
+      return lazyComponent.loadChildren().then((module) => {
         let componentType = null;
-        const moduleRef = ngModuleFactory.create(this.injector);
+        const moduleRef = createNgModuleRef(module, this.injector);
         const dynamicComponentType = moduleRef.injector.get(DYNAMIC_COMPONENT);
         if (!dynamicComponentType) {
           throw new Error(

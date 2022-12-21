@@ -1,4 +1,5 @@
 /* eslint-disable @angular-eslint/no-conflicting-lifecycle */
+import { isPlatformServer } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -15,12 +16,14 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  PLATFORM_ID,
   Renderer2,
   SimpleChanges,
   Type,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
+import { Data } from '@angular/router';
 import { ComponentRendering, HtmlElementRendering } from '@sitecore-jss/sitecore-jss';
 import { Observable } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
@@ -29,10 +32,21 @@ import {
   JssComponentFactoryService,
 } from '../jss-component-factory.service';
 import { PlaceholderLoadingDirective } from './placeholder-loading.directive';
-import { PLACEHOLDER_MISSING_COMPONENT_COMPONENT } from './placeholder.token';
+import {
+  DataResolver,
+  DATA_RESOLVER,
+  GuardResolver,
+  GUARD_RESOLVER,
+  PLACEHOLDER_MISSING_COMPONENT_COMPONENT,
+} from './placeholder.token';
 import { RenderEachDirective } from './render-each.directive';
 import { RenderEmptyDirective } from './render-empty.directive';
 import { isRawRendering } from './rendering';
+
+export interface FactoryWithData {
+  factory: ComponentFactoryResult;
+  data?: Data;
+}
 
 /**
  * @param {ComponentRendering} rendering
@@ -60,6 +74,7 @@ export class PlaceholderComponent implements OnInit, OnChanges, DoCheck, OnDestr
   @Input() rendering: ComponentRendering;
   @Input() renderings?: Array<ComponentRendering | HtmlElementRendering>;
   @Input() outputs: { [k: string]: (eventType: unknown) => void };
+  @Input() clientOnly = false;
 
   @Output()
   loaded = new EventEmitter<string | undefined>();
@@ -94,7 +109,10 @@ export class PlaceholderComponent implements OnInit, OnChanges, DoCheck, OnDestr
     private elementRef: ElementRef,
     private renderer: Renderer2,
     @Inject(PLACEHOLDER_MISSING_COMPONENT_COMPONENT)
-    private missingComponentComponent: Type<unknown>
+    private missingComponentComponent: Type<unknown>,
+    @Inject(GUARD_RESOLVER) private guardResolver: GuardResolver,
+    @Inject(DATA_RESOLVER) private dataResolver: DataResolver,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit() {
@@ -165,7 +183,11 @@ export class PlaceholderComponent implements OnInit, OnChanges, DoCheck, OnDestr
       );
   }
 
-  private _render() {
+  private async _render() {
+    if (this.clientOnly && isPlatformServer(this.platformId)) {
+      return;
+    }
+
     this._componentInstances = [];
     this.view.clear();
 
@@ -203,22 +225,21 @@ export class PlaceholderComponent implements OnInit, OnChanges, DoCheck, OnDestr
       });
       this.isLoading = false;
     } else {
-      this.componentFactory
-        .getComponents(placeholder)
-        .then((components) =>
-          components.forEach((rendering, index) => {
-            if (this.renderEachTemplate && !isRawRendering(rendering.componentDefinition)) {
-              this._renderTemplatedComponent(rendering.componentDefinition, index);
-            } else {
-              this._renderEmbeddedComponent(rendering, index);
-            }
-            this.isLoading = false;
-          })
-        )
-        .then(() => {
-          this.changeDetectorRef.markForCheck();
-          this.loaded.emit(this.name);
-        });
+      const factories = await this.componentFactory.getComponents(placeholder);
+      const nonGuarded = await this.guardResolver(factories);
+      const withData = await this.dataResolver(nonGuarded);
+
+      withData.forEach((rendering: any, index: number) => {
+        if (this.renderEachTemplate && !isRawRendering(rendering.factory.componentDefinition)) {
+          this._renderTemplatedComponent(rendering.factory.componentDefinition, index);
+        } else {
+          this._renderEmbeddedComponent(rendering.factory, rendering.data, index);
+        }
+      });
+
+      this.isLoading = false;
+      this.changeDetectorRef.markForCheck();
+      this.loaded.emit(this.name);
     }
   }
 
@@ -235,7 +256,7 @@ export class PlaceholderComponent implements OnInit, OnChanges, DoCheck, OnDestr
     });
   }
 
-  private _renderEmbeddedComponent(rendering: ComponentFactoryResult, index: number) {
+  private _renderEmbeddedComponent(rendering: ComponentFactoryResult, data: Data, index: number) {
     if (!rendering.componentImplementation) {
       const componentName = (rendering.componentDefinition as ComponentRendering).componentName;
       console.error(
@@ -266,6 +287,7 @@ export class PlaceholderComponent implements OnInit, OnChanges, DoCheck, OnDestr
 
     const componentInstance = createdComponentRef.instance;
     componentInstance.rendering = rendering.componentDefinition;
+    componentInstance.data = data;
     if (this._inputs) {
       this._setComponentInputs(componentInstance, this._inputs);
     }
