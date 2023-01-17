@@ -1,4 +1,3 @@
-/* eslint-disable @angular-eslint/no-conflicting-lifecycle */
 import { isPlatformServer } from '@angular/common';
 import {
   ChangeDetectorRef,
@@ -23,7 +22,7 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { Data } from '@angular/router';
+import { Data, Router, UrlTree } from '@angular/router';
 import { ComponentRendering, HtmlElementRendering } from '@sitecore-jss/sitecore-jss';
 import { Observable } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
@@ -43,20 +42,16 @@ import { RenderEachDirective } from './render-each.directive';
 import { RenderEmptyDirective } from './render-empty.directive';
 import { isRawRendering } from './rendering';
 
-export interface FactoryWithData {
-  factory: ComponentFactoryResult;
-  data?: Data;
-}
-
-/**
- * @param {ComponentRendering} rendering
- * @param {string} name
- */
 function getPlaceholder(rendering: ComponentRendering, name: string) {
   if (rendering && rendering.placeholders && Object.keys(rendering.placeholders).length > 0) {
     return rendering.placeholders[name];
   }
   return null;
+}
+
+export interface FactoryWithData {
+  factory: ComponentFactoryResult;
+  data?: Data;
 }
 
 @Component({
@@ -70,31 +65,38 @@ function getPlaceholder(rendering: ComponentRendering, name: string) {
   `,
 })
 export class PlaceholderComponent implements OnInit, OnChanges, DoCheck, OnDestroy {
-  @Input() name?: string;
-  @Input() rendering: ComponentRendering;
-  @Input() renderings?: Array<ComponentRendering | HtmlElementRendering>;
-  @Input() outputs: { [k: string]: (eventType: unknown) => void };
-  @Input() clientOnly = false;
+  private _inputs: { [key: string]: any };
+  private _differ: KeyValueDiffer<string, any>;
+  private _componentInstances: any[] = [];
+  private destroyed = false;
+  private parentStyleAttribute = '';
+  public isLoading = true;
+
+  @Input()
+  name?: string;
+  @Input()
+  rendering: ComponentRendering;
+  @Input()
+  renderings?: Array<ComponentRendering | HtmlElementRendering>;
+  @Input()
+  outputs: { [k: string]: (eventType: any) => void };
+  @Input()
+  clientOnly = false;
 
   @Output()
   loaded = new EventEmitter<string | undefined>();
 
-  @ContentChild(RenderEachDirective, { static: true }) renderEachTemplate: RenderEachDirective;
-  @ContentChild(RenderEmptyDirective, { static: true }) renderEmptyTemplate: RenderEmptyDirective;
+  @ViewChild('view', { read: ViewContainerRef, static: true })
+  private view: ViewContainerRef;
+  @ContentChild(RenderEachDirective, { static: true })
+  renderEachTemplate: RenderEachDirective;
+  @ContentChild(RenderEmptyDirective, { static: true })
+  renderEmptyTemplate: RenderEmptyDirective;
   @ContentChild(PlaceholderLoadingDirective, { static: true })
   placeholderLoading?: PlaceholderLoadingDirective;
-  @ViewChild('view', { read: ViewContainerRef, static: true }) private view: ViewContainerRef;
-
-  public isLoading = true;
-
-  private _inputs: { [key: string]: unknown };
-  private _differ: KeyValueDiffer<string, unknown>;
-  private _componentInstances: { [prop: string]: unknown }[] = [];
-  private destroyed = false;
-  private parentStyleAttribute = '';
 
   @Input()
-  set inputs(value: { [key: string]: unknown }) {
+  set inputs(value: { [key: string]: any }) {
     this._inputs = value;
     if (!this._differ && value) {
       this._differ = this.differs.find(value).create();
@@ -108,8 +110,8 @@ export class PlaceholderComponent implements OnInit, OnChanges, DoCheck, OnDestr
     private changeDetectorRef: ChangeDetectorRef,
     private elementRef: ElementRef,
     private renderer: Renderer2,
-    @Inject(PLACEHOLDER_MISSING_COMPONENT_COMPONENT)
-    private missingComponentComponent: Type<unknown>,
+    private router: Router,
+    @Inject(PLACEHOLDER_MISSING_COMPONENT_COMPONENT) private missingComponentComponent: Type<any>,
     @Inject(GUARD_RESOLVER) private guardResolver: GuardResolver,
     @Inject(DATA_RESOLVER) private dataResolver: DataResolver,
     @Inject(PLATFORM_ID) private platformId: Object
@@ -136,7 +138,7 @@ export class PlaceholderComponent implements OnInit, OnChanges, DoCheck, OnDestr
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.rendering || changes.renderings) {
+    if (changes['rendering'] || changes['renderings']) {
       this._render();
     }
   }
@@ -150,7 +152,7 @@ export class PlaceholderComponent implements OnInit, OnChanges, DoCheck, OnDestr
     if (!changes) {
       return;
     }
-    const updates: { [key: string]: unknown } = {};
+    const updates: { [key: string]: any } = {};
     changes.forEachRemovedItem((change) => (updates[change.key] = null));
     changes.forEachAddedItem((change) => (updates[change.key] = change.currentValue));
     changes.forEachChangedItem((change) => (updates[change.key] = change.currentValue));
@@ -159,25 +161,22 @@ export class PlaceholderComponent implements OnInit, OnChanges, DoCheck, OnDestr
     );
   }
 
-  private _setComponentInputs(
-    componentInstance: { [key: string]: unknown },
-    inputs: { [key: string]: unknown }
-  ) {
+  private _setComponentInputs(componentInstance: any, inputs: { [key: string]: any }) {
     Object.entries(inputs).forEach(
       ([input, inputValue]) => (componentInstance[input] = inputValue)
     );
   }
 
   private _subscribeComponentOutputs(
-    componentInstance: { [key: string]: unknown },
-    outputs: { [k: string]: (eventType: unknown) => void }
+    componentInstance: any,
+    outputs: { [k: string]: (eventType: any) => void }
   ) {
     Object.keys(outputs)
       .filter(
         (output) => componentInstance[output] && componentInstance[output] instanceof Observable
       )
       .forEach((output) =>
-        (componentInstance[output] as Observable<unknown>)
+        (componentInstance[output] as Observable<any>)
           .pipe(takeWhile(() => !this.destroyed))
           .subscribe(outputs[output])
       );
@@ -196,8 +195,9 @@ export class PlaceholderComponent implements OnInit, OnChanges, DoCheck, OnDestr
     }
 
     if (!this.name && !this.renderings) {
+      // tslint:disable-next-line:max-line-length
       console.warn(
-        'Placeholder name was not specified, and explicit renderings array was not passed. Placeholder requires either name and rendering, or renderings.'
+        `Placeholder name was not specified, and explicit renderings array was not passed. Placeholder requires either name and rendering, or renderings.`
       );
       this.isLoading = false;
       return;
@@ -226,20 +226,34 @@ export class PlaceholderComponent implements OnInit, OnChanges, DoCheck, OnDestr
       this.isLoading = false;
     } else {
       const factories = await this.componentFactory.getComponents(placeholder);
-      const nonGuarded = await this.guardResolver(factories);
-      const withData = await this.dataResolver(nonGuarded);
 
-      withData.forEach((rendering: any, index: number) => {
-        if (this.renderEachTemplate && !isRawRendering(rendering.factory.componentDefinition)) {
-          this._renderTemplatedComponent(rendering.factory.componentDefinition, index);
+      try {
+        const nonGuarded = await this.guardResolver(factories);
+        const withData = await this.dataResolver(nonGuarded);
+
+        withData.forEach((rendering, index) => {
+          if (this.renderEachTemplate && !isRawRendering(rendering.factory.componentDefinition)) {
+            this._renderTemplatedComponent(rendering.factory.componentDefinition, index);
+          } else {
+            this._renderEmbeddedComponent(rendering.factory, rendering.data, index);
+          }
+        });
+
+        this.isLoading = false;
+        this.changeDetectorRef.markForCheck();
+        this.loaded.emit(this.name);
+      } catch (e) {
+        this.isLoading = false;
+        if (e instanceof UrlTree) {
+          this.router.navigateByUrl(e);
+        } else if (typeof e === 'string') {
+          this.router.navigate([e]);
+        } else if (Array.isArray(e)) {
+          this.router.navigate(e);
         } else {
-          this._renderEmbeddedComponent(rendering.factory, rendering.data, index);
+          throw e;
         }
-      });
-
-      this.isLoading = false;
-      this.changeDetectorRef.markForCheck();
-      this.loaded.emit(this.name);
+      }
     }
   }
 
@@ -288,6 +302,7 @@ export class PlaceholderComponent implements OnInit, OnChanges, DoCheck, OnDestr
     const componentInstance = createdComponentRef.instance;
     componentInstance.rendering = rendering.componentDefinition;
     componentInstance.data = data;
+
     if (this._inputs) {
       this._setComponentInputs(componentInstance, this._inputs);
     }
