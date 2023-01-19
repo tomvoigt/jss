@@ -43,7 +43,7 @@ export class GenericLinkDirective extends LinkDirective {
             event.preventDefault();
           });
         } else {
-          this.renderer.setAttribute(node, key, propValue);
+          this.updateAttribute(node, key, propValue);
         }
       });
 
