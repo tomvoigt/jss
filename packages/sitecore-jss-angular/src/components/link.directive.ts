@@ -89,7 +89,7 @@ export class LinkDirective implements OnChanges {
     const view = this.templateRef.createEmbeddedView(null);
     const element: Element = view.rootNodes[0];
     if (!element) {
-      view.destory();
+      view.destroy();
       return {};
     }
     const attrs: { [key: string]: string } = {};
